@@ -36,35 +36,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", async (req, res) => {
-  const { data, error } = await supabase.from("hostels").select("*");
 
-  res.render("admin/auth.ejs", { hosteldata: data });
-});
-
-app.get("/admin/auth",async(req,res)=>{
   res.render("admin/auth.ejs");
-})
-
-
-
-
-app.post("/admin/login",async(req,res)=>{
-  const {email,password} = req.body;
-    const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*");
-
-  const { logindata, error } = await supabase.auth.signInWithPassword({
-  email: email,
-  password: password,
 });
-  
 
-if(error){
-  res.redirect("/admin/auth");
-}
-else{
-  res.render("admin/dashboard.ejs",{logindata,hosteldata})
-}
-})
+
+
+
+
+
 
 passport.use(
   "google",
@@ -124,6 +104,17 @@ app.get(
     scope: ["profile", "email"],
   })
 );
+
+app.get(
+  "/auth/google/dashboard",
+  passport.authenticate("google", {
+    failureRedirect: "/",
+    successRedirect: "/admin/dashboard", 
+  })
+);
+
+
+
 app.get("/admin/dashboard", async(req,res)=>{
 
   const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*");

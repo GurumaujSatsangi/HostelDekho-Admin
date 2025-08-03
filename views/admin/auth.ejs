@@ -1,19 +1,8 @@
 <%- include('../dashboard/partials/navbar') %>
 <div class="container">
   <h4>LOGIN AS ADMIN</h4><hr>
+<a href="/auth/google" class="btn btn-primary">Click Here</a>
 
 
-<form action="/admin/login" method="POST">
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Email address</label>
-    <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Password</label>
-    <input type="password" class="form-control" name="password" id="exampleInputPassword1">
-  </div>
-  
-  <input type="submit" class="btn btn-primary" value="Login">
-</form>
 </div>
 <%- include('../partials/footer') %>
