@@ -65,8 +65,10 @@
          
           <th>ROOM NUMBER</th>
           <th>SPEED TEST</th>
+          <th>IMAGE</th>
           <th>REMARKS</th>
           <th>SUBMITTED BY</th>
+          <th>ACTION</th>
         </tr>
       </thead>
 <% if(roomdata && roomdata.length>0){ %>
@@ -74,13 +76,15 @@
       <tr>
         <td><%=roomdata.room_number %></td>
         <td><%= roomdata.speed_test %></td>
+        <td><a href="<%= roomdata.image %>"><i class="bi bi-eye-fill"></i></a></td>
         <td><%= roomdata.remarks %></td>
         <td><%= roomdata.submitted_by %></td>
+        <td><a class="btn btn-outline-danger" href="/admin/delete-room/<%=roomdata.room_id%>"><i class="bi bi-trash3-fill"></i></a></td>
       
       </tr>
       <% }) %>
       <% } else { %>
-        <tr><td colspan="4">No Room Data Available!</td></tr> <% } %>
+        <tr><td colspan="6">No Room Data Available!</td></tr> <% } %>
       
     </tbody>
   </table>
