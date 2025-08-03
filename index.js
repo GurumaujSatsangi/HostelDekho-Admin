@@ -18,7 +18,6 @@ const supabase = createClient(
 );
 const app = express();
 
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -36,15 +35,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", async (req, res) => {
-
   res.render("admin/auth.ejs");
 });
 
-
-
-
-
-
+app.get("/logout", (req, res) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
 
 passport.use(
   "google",
@@ -109,83 +110,144 @@ app.get(
   "/auth/google/dashboard",
   passport.authenticate("google", {
     failureRedirect: "/",
-    successRedirect: "/admin/dashboard", 
+    successRedirect: "/admin/dashboard",
   })
 );
 
+app.get("/admin/dashboard", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
 
+  const { data: hosteldata, error: hostelerror } = await supabase
+    .from("hostels")
+    .select("*");
 
-app.get("/admin/dashboard", async(req,res)=>{
-
-  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*");
-  
-  return res.render("admin/dashboard.ejs",{hosteldata, user: req.session.user,});
-})
-
-app.get("/admin/manage-hostel/:hostelid/modify-floor/:floorid", async(req,res)=>{
-  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.hostelid).single();
-
-    const{data:floordata,error:floorerror}=await supabase.from("floor_plans").select("*").eq("id",req.params.floorid).single();
-  res.render("admin/edit-floor-plan.ejs", {hosteldata,floordata});
-
+  return res.render("admin/dashboard.ejs", {
+    hosteldata,
+    user: req.session.user,
+  });
 });
 
-app.get("/admin/delete-hostel/:id", async(req,res)=>{
-  await supabase.from("hostels").delete().eq("hostel_id",req.params.id);
+app.get(
+  "/admin/manage-hostel/:hostelid/modify-floor/:floorid",
+  async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.redirect("/");
+    }
+
+    const { data: hosteldata, error: hostelerror } = await supabase
+      .from("hostels")
+      .select("*")
+      .eq("hostel_id", req.params.hostelid)
+      .single();
+
+    const { data: floordata, error: floorerror } = await supabase
+      .from("floor_plans")
+      .select("*")
+      .eq("id", req.params.floorid)
+      .single();
+    res.render("admin/edit-floor-plan.ejs", { hosteldata, floordata });
+  }
+);
+
+app.get("/admin/delete-hostel/:id", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+
+  await supabase.from("hostels").delete().eq("hostel_id", req.params.id);
   res.redirect("/admin/dashboard");
-  
 });
 
-app.get("/admin/:hostelid/new-floor", async(req,res)=>{
+app.get("/admin/:hostelid/new-floor", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
 
-  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.hostelid).single();
+  const { data: hosteldata, error: hostelerror } = await supabase
+    .from("hostels")
+    .select("*")
+    .eq("hostel_id", req.params.hostelid)
+    .single();
 
-res.render("admin/new-floor.ejs",{hosteldata});
+  res.render("admin/new-floor.ejs", { hosteldata });
 });
 
-app.get("/admin/delete-floor/:hostelid/:floorid", async(req,res)=>{
-const {data,error}=await supabase.from("floor_plans").delete().eq("id",req.params.floorid);
-return res.redirect(`/admin/manage-hostel/${req.params.hostelid}`)
+app.get("/admin/delete-floor/:hostelid/:floorid", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+
+  const { data, error } = await supabase
+    .from("floor_plans")
+    .delete()
+    .eq("id", req.params.floorid);
+  return res.redirect(`/admin/manage-hostel/${req.params.hostelid}`);
 });
 
-app.post("/add-new-floor",async(req,res)=>{
-const hostelid = req.body.hostelid;
-const floor = req.body.floor;
+app.post("/add-new-floor", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
 
-const {data,error}=await supabase.from("floor_plans").insert({
-  hostel_id:hostelid,
-  floor:floor,
-});
-res.redirect(`/admin/manage-hostel/${hostelid}`);
-});
+  const hostelid = req.body.hostelid;
+  const floor = req.body.floor;
 
-app.post("/add-new-block",async(req,res)=>{
-  const {block,type,beds,btype} = req.body;
-const {data,error}=await supabase.from("hostels").insert({
-  hostel_name:block,
-  hostel_type:type,
-  bed_availability:beds,
-  bed_type:btype,
-});
-return res.redirect("/admin/dashboard");
+  const { data, error } = await supabase.from("floor_plans").insert({
+    hostel_id: hostelid,
+    floor: floor,
+  });
+  res.redirect(`/admin/manage-hostel/${hostelid}`);
 });
 
-app.get("/admin/dashboard/new-hostel",async(req,res)=>{
-res.render("admin/new-hostel.ejs");
+app.post("/add-new-block", async (req, res) => {
+  const { block, type, beds, btype } = req.body;
+  const { data, error } = await supabase.from("hostels").insert({
+    hostel_name: block,
+    hostel_type: type,
+    bed_availability: beds,
+    bed_type: btype,
+  });
+  return res.redirect("/admin/dashboard");
 });
 
-app.post("/modify-floor-plan", async(req,res)=>{
+app.get("/admin/dashboard/new-hostel", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+
+  res.render("admin/new-hostel.ejs");
+});
+
+app.post("/modify-floor-plan", async (req, res) => {
   const new_image = req.body.new_image;
-})
+});
 
-app.get("/admin/manage-hostel/:id",async(req,res)=>{
+app.get("/admin/manage-hostel/:id", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect("/");
+  }
 
-  const{data:hosteldata,error:hostelerror}=await supabase.from("hostels").select("*").eq("hostel_id",req.params.id).single();
-  const{data:floordata,error:floorerror}=await supabase.from("floor_plans").select("*").eq("hostel_id",hosteldata.hostel_id);
-  const{data:roomdata,error:roomerror}=await supabase.from("rooms").select("*").eq("hostel_id",hosteldata.hostel_id);
-  return res.render("admin/manage-hostels.ejs",{hosteldata,floordata,roomdata});
-})
-
+  const { data: hosteldata, error: hostelerror } = await supabase
+    .from("hostels")
+    .select("*")
+    .eq("hostel_id", req.params.id)
+    .single();
+  const { data: floordata, error: floorerror } = await supabase
+    .from("floor_plans")
+    .select("*")
+    .eq("hostel_id", hosteldata.hostel_id);
+  const { data: roomdata, error: roomerror } = await supabase
+    .from("rooms")
+    .select("*")
+    .eq("hostel_id", hosteldata.hostel_id);
+  return res.render("admin/manage-hostels.ejs", {
+    hosteldata,
+    floordata,
+    roomdata,
+  });
+});
 
 app.listen(3000, () => {
   console.log("Running on Port 3000!");
