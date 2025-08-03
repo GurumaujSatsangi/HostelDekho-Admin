@@ -1,0 +1,89 @@
+<%- include('../dashboard/partials/navbar') %>
+<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">MANAGE HOSTEL : <%= hosteldata.hostel_name %></li>
+  </ol>
+</nav>
+<div class="container">
+   <h4>BLOCK DETAILS</h4>
+  <hr>
+  <table class="table">
+    <tbody>
+      <thead>
+        <tr>
+          <th>BLOCK</th>
+          <th>TYPE OF BLOCK (AC/NON-AC)</th>
+          <th>TYPE OF BED ROOMS AVAILABLE</th>
+          <th>BED TYPE</th>
+        </tr>
+      </thead>
+
+      <tr>
+        <td><%= hosteldata.hostel_name %></td>
+        <td><%= hosteldata.hostel_type %></td>
+        <td><%= hosteldata.bed_availability %></td>
+        <td><%= hosteldata.bed_type %></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h4>FLOOR PLANS</h4>
+    <a href="/admin/<%=hosteldata.hostel_id %>/new-floor" class="btn btn-outline-primary">Add New Floor</a>
+
+  <hr>
+  <table class="table">
+    <tbody>
+      <thead>
+        <tr>
+         
+          <th>FLOOR</th>
+          <th>VIEW FLOOR PLAN</th>
+          <th colspan="2">ACTION</th>
+        </tr>
+      </thead>
+<% if(floordata && floordata.length>0){ %>
+  <% floordata.forEach(function(floordata){ %>
+      <tr>
+        
+      <td><%= floordata.floor %></td>
+      <td><a href="<%= floordata.link %>" target="_blank"><i class="bi bi-eye-fill"></i></a></td>
+      <td><a class="btn btn-outline-success" href="/admin/manage-hostel/<%= hosteldata.hostel_id %>/modify-floor/<%= floordata.id %>"><i class="bi bi-pencil-square"></i></a></td>
+      <td><a class="btn btn-outline-danger" href="/admin/delete-floor/<%= hosteldata.hostel_id %>/<%= floordata.id %>"><i class="bi bi-trash3-fill"></i></a></td>
+
+    </tr>
+      <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+<h4>ROOMS</h4>
+  <hr>
+  <table class="table">
+    <tbody>
+      <thead>
+        <tr>
+         
+          <th>ROOM NUMBER</th>
+          <th>SPEED TEST</th>
+          <th>REMARKS</th>
+          <th>SUBMITTED BY</th>
+        </tr>
+      </thead>
+<% if(roomdata && roomdata.length>0){ %>
+  <% roomdata.forEach(function(roomdata){%>
+      <tr>
+        <td><%=roomdata.room_number %></td>
+        <td><%= roomdata.speed_test %></td>
+        <td><%= roomdata.remarks %></td>
+        <td><%= roomdata.submitted_by %></td>
+      
+      </tr>
+      <% }) %>
+      <% } else { %>
+        <tr><td colspan="4">No Room Data Available!</td></tr> <% } %>
+      
+    </tbody>
+  </table>
+  
+</div>
+<%- include('../partials/footer') %>

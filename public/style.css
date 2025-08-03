@@ -1,0 +1,23 @@
+.ct-animate-blink {
+   animation: blink 1.5s infinite;
+   animation-fill-mode: both;
+   }
+
+@keyframes blink {
+   0% { opacity: 0 }
+   50% { opacity: 1 }
+   100% { opacity: 0 }
+   }
+.container{
+   margin:20px;
+   padding:5px;
+   
+}
+.nav-link:hover{
+   color: blue;
+}
+.card-body{
+   height: 150px;
+}
+
+

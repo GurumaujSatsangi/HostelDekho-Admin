@@ -1,0 +1,35 @@
+<%- include('../dashboard/partials/navbar') %>
+<div class="container">
+  <h4>ADMIN PANEL</h4><hr>
+  <a href="/admin/dashboard/new-hostel" class="btn btn-outline-primary">Add New Block</a>
+<hr>
+<% if(hosteldata && hosteldata.length>0) {%>
+<table class="table">
+  <tbody>
+    <thead>
+        <tr>
+            <th>BLOCK</th>
+            <th>TYPE OF BLOCK (AC/NON-AC)</th>
+            <th>TYPE OF BED ROOMS AVAILABLE</th>
+            <th>BED TYPE</th>
+            <th colspan="2">ACTION</th>
+        </tr>
+        
+    </thead>
+    <%hosteldata.forEach(function(hostels) {%>
+
+    <tr>
+      <td><%= hostels.hostel_name %></td>
+      <td><%= hostels.hostel_type %></td>
+      <td><%= hostels.bed_availability %></td>
+      <td><%= hostels.bed_type %></td>
+      <td><a class="btn btn-outline-success" href="/admin/manage-hostel/<%= hostels.hostel_id%>"><i class="bi bi-pencil-square"></i></a></td>
+      <td><a class="btn btn-outline-danger" href="/admin/delete-hostel/<%= hostels.hostel_id%>"><i class="bi bi-trash3-fill"></i></a></td>
+
+    </tr>
+    <%}) %>
+     <%} %>
+  </tbody>
+</table>
+</div>
+<%- include('../partials/footer') %>

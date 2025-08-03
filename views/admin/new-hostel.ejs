@@ -1,0 +1,97 @@
+<%- include('../dashboard/partials/navbar') %>
+<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">ADD NEW FLOOR</li>
+  </ol>
+</nav>
+<div class="container">
+   <h4>ADD NEW BLOCK</h4>
+  <hr>
+ <form action="/add-new-block" method="POST">
+  <div class="mb-3">
+    <label  class="form-label">NAME OF THE BLOCK</label>
+    <input type="text" class="form-control" name="block" aria-describedby="emailHelp">
+  </div>
+   <div class="mb-3">
+    <label  class="form-label">TYPE</label>
+    <div class="form-check">
+  <input class="form-check-input" value="AC" type="radio" name="type" id="radioDefault1">
+  <label class="form-check-label" for="radioDefault1">
+    AC
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" value="NON-AC" type="radio" name="type" id="radioDefault2">
+  <label class="form-check-label" for="radioDefault2">
+    NON-AC
+  </label>
+</div>
+  </div>
+
+  <div class="mb-3">
+    <label  class="form-label">BED AVAILABILITY</label>
+    <div class="form-check">
+  <input class="form-check-input" type="checkbox" name="beds" value="1 BED" id="checkDefault">
+  <label class="form-check-label" for="checkDefault">
+    1 BED
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" name="beds" value="2 BED" id="checkChecked">
+  <label class="form-check-label" for="checkChecked">
+    2 BED
+  </label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" name="beds" value="3 BED" id="checkChecked">
+  <label class="form-check-label" for="checkChecked">
+    3 BED
+  </label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" name="beds" value="4 BED" id="checkChecked">
+  <label class="form-check-label" for="checkChecked">
+    4 BED
+  </label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" name="beds" value="6 BED" id="checkChecked">
+  <label class="form-check-label" for="checkChecked">
+    6 BED
+  </label>
+</div>
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" name="beds" value="8 BED" id="checkChecked">
+  <label class="form-check-label" for="checkChecked">
+    8 BED
+  </label>
+</div>
+  </div>
+
+    <div class="mb-3">
+    <label  class="form-label">BED TYPE</label>
+    <div class="form-check">
+  <input class="form-check-input" value="BUNKER" type="radio" name="btype" id="radioDefault1">
+  <label class="form-check-label" for="radioDefault1">
+    BUNKER
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" value="NON-BUNKER" type="radio" name="btype" id="radioDefault2">
+  <label class="form-check-label" for="radioDefault2">
+    NON-BUNKER
+  </label>
+</div>
+  </div>
+   <div class="mb-3">
+    <input type="submit" class="btn btn-outline-primary" value="ADD">
+   </div>
+ </form>
+  
+</div>
+<%- include('../partials/footer') %>

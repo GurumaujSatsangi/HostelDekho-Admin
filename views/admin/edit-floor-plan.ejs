@@ -1,0 +1,38 @@
+<%- include('../dashboard/partials/navbar') %>
+<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">MANAGE FLOOR PLAN : <%= hosteldata.hostel_name %> - FLOOR <%= floordata.floor %></li>
+  </ol>
+</nav>
+<div class="container">
+   <h4>MANAGE FLOOR PLAN</h4><hr>
+   <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">BLOCK</th>
+      <th scope="col">FLOOR</th>
+      <th scope="col">UPLOADED FLOOR PLAN</th>
+      <th scope="col">RE-UPLOAD FLOOR PLAN</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><%= hosteldata.hostel_name %></td>
+      <td><%= floordata.floor %></td>
+      <% if(!floordata.link){%>
+        <td>NO FLOOR PLAN UPLOADED</td>
+        <% } else { %>
+                <td><a target="_blank" href="<%= floordata.link %>">VIEW</a></td>
+
+          <% } %>
+      <td><form method="POST" action="/modify-floor-plan">
+        <div class="mb-3"><input class="form-control" name="new_image" type="file"></div>
+         <input class="btn btn-outline-danger" type="submit" value="SUBMIT">
+      </form></td>
+    </tr>
+  </tbody>
+  </table>
+  
+</div>
+<%- include('../partials/footer') %>

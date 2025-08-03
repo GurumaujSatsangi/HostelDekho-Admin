@@ -1,0 +1,27 @@
+<%- include('../dashboard/partials/navbar') %>
+<nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="/admin/dashboard" class="text-decoration-none">Home</a></li>
+
+    <li class="breadcrumb-item active" aria-current="page">ADD NEW FLOOR : <%= hosteldata.hostel_name %></li>
+  </ol>
+</nav>
+<div class="container">
+   <h4>ADD NEW FLOOR FOR <%= hosteldata.hostel_name %></h4>
+  <hr>
+ <form action="/add-new-floor" method="POST">
+  <div class="mb-3">
+    <label  class="form-label">FLOOR</label>
+    <input type="hidden" class="form-control" name="hostelid" value="<%= hosteldata.hostel_id%>" aria-describedby="emailHelp">
+
+    <input type="text" class="form-control" name="floor" aria-describedby="emailHelp">
+  </div>
+
+  <div class="mb-3">
+    <input type="submit" class="btn btn-success" value="ADD">
+  </div>
+   
+ </form>
+  
+</div>
+<%- include('../partials/footer') %>
