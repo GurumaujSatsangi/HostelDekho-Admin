@@ -202,13 +202,23 @@ app.post("/add-new-floor", async (req, res) => {
 });
 
 app.post("/add-new-block", async (req, res) => {
-  const { block, type, beds, btype } = req.body;
+  const { block, type, beds, btype, mess_caterer,veg_mess_floor,non_veg_mess_floor,special_mess_floor,badminton_court,chota_dhobi } = req.body;
   const { data, error } = await supabase.from("hostels").insert({
     hostel_name: block,
     hostel_type: type,
     bed_availability: beds,
     bed_type: btype,
+    mess_caterer:mess_caterer,
+    veg_mess_floor:veg_mess_floor,
+    non_veg_mess_floor:non_veg_mess_floor,
+    special_mess_floor:special_mess_floor,
+    badminton_court:badminton_court,
+    chota_dhobi_facility:chota_dhobi
   });
+
+  if(error){
+    console.log(error);
+  }
   return res.redirect("/admin/dashboard");
 });
 
