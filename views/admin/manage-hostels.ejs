@@ -74,6 +74,37 @@
       <% } %>
     </tbody>
   </table>
+  <h4>ROOM DETAILS</h4>
+  <hr>
+  <table class="table">
+    <tr>
+      <td rowspan="2">
+        <b>ROOM TYPE</b>
+      </td>
+      <td colspan="3">
+        <b>PRICE</b>
+      </td>
+      <td rowspan="2">
+        <b>IMAGE</b>
+      </td>
+      <td rowspan="2"><b>ACTION</b></td>
+    </tr>
+    <tr>
+<td><b>VEG MESS</b></td>
+<td><b>NON VEG MESS</b></td>
+<td><b>SPECIAL MESS</b></td>
+
+    </tr>
+<% hosteldata.bed_availability.forEach(function(bed) { %>
+    <tr><td><%= bed %></td>
+    <form action="/add-room-details" method="POST"><td><input class="form-control" type="text" name="price_veg"></td>
+  <td><input class="form-control" type="text" name="price_non_veg"></td>
+  <td><input class="form-control" type="text" name="price_special"></td>
+  <td><input type="file"></td>
+  <td><input type="submit" value="Publish" class="btn btn-primary"></input></td></form>
+  </tr>
+  <% }) %>
+  </table>
 <h4>ROOMS</h4>
   <hr>
   <table class="table">
@@ -85,8 +116,7 @@
           <th>AIRTEL SPEED CONDITION</th>
           <th>JIO SPEED CONDITION</th>
           <th>VIT WIFI SPEED CONDITION</th>
-
-
+          <th>CLEANLINESS</th>
           <th>REMARKS</th>
           <th>ACTION</th>
         </tr>
@@ -98,9 +128,10 @@
         <td><%= roomdata.airtel_speed %></td>
         <td><%= roomdata.jio_speed %></td>
         <td><%= roomdata.vit_wifi_speed %></td>
+        <td><%= roomdata.cleaniless_score %></td>
 
         <td><%= roomdata.remarks %></td>
-        <td><a class="btn btn-outline-danger" href="/admin/delete-room/<%=roomdata.room_id%>"><i class="bi bi-trash3-fill"></i></a></td>
+        <td><a class="btn btn-outline-danger" href="/admin/delete-room/<%=roomdata.review_id%>"><i class="bi bi-trash3-fill"></i></a></td>
       
       </tr>
       <% }) %>

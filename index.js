@@ -151,6 +151,13 @@ app.get(
   }
 );
 
+
+app.get("/admin/delete-room/:id",async(req,res)=>{
+  
+  const {data,error}=await supabase.from("reviews").delete().eq("review_id",req.params.id);
+  console.log("REVIEW DELETED !!!")
+  return res.redirect("/admin/dashboard");
+})
 app.get("/admin/delete-hostel/:id", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
@@ -239,6 +246,7 @@ app.get("/admin/manage-hostel/:id", async (req, res) => {
     return res.redirect("/");
   }
 
+  
   const { data: hosteldata, error: hostelerror } = await supabase
     .from("hostels")
     .select("*")
@@ -249,7 +257,7 @@ app.get("/admin/manage-hostel/:id", async (req, res) => {
     .select("*")
     .eq("hostel_id", hosteldata.hostel_id);
   const { data: roomdata, error: roomerror } = await supabase
-    .from("rooms")
+    .from("reviews")
     .select("*")
     .eq("hostel_id", hosteldata.hostel_id);
   return res.render("admin/manage-hostels.ejs", {
