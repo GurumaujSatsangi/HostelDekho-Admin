@@ -281,7 +281,7 @@ app.post(
 
       if (error) throw error;
 
-      return res.redirect(`/admin/manage-hostel/${hostel_id}`);
+      return res.redirect("/admin/dashboard");
     } catch (error) {
       console.error(error);
       res.status(500).send(error.message);
@@ -335,16 +335,51 @@ app.get("/admin/dashboard/new-hostel", async (req, res) => {
   res.render("admin/new-hostel.ejs");
 });
 
-app.post("/modify-floor-plan", async (req, res) => {
-  const new_image = req.body.new_image;
-});
+app.post(
+  "/modify-floor-plan",
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      const { floor_id, hostel_id } = req.body;
+
+      let imageUrl = null; // ✅ declare outside
+
+      // upload image if provided
+      if (req.file) {
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          folder: "floor_plans",
+          resource_type: "image",
+        });
+        imageUrl = uploadResult.secure_url;
+      }
+
+      // prepare update object
+      const updateData = {};
+      if (imageUrl) updateData.link = imageUrl;
+
+      // update DB
+      const { error } = await supabase
+        .from("floor_plans")
+        .update(updateData)
+        .eq("id", floor_id);
+
+      if (error) throw error;
+
+      return res.redirect(`/admin/manage-hostel/${hostel_id}`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error.message);
+    }
+  }
+);
+
 
 app.get("/admin/manage-hostel/:id", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
   }
 
-  const {data:roomdetailsdata,error:roomdetailserror}=await supabase.from("room_details").select("*").eq("hostel_id",req.params.id).single();
+  const {data:roomdetailsdata,error:roomdetailserror}=await supabase.from("room_details").select("*").eq("hostel_id",req.params.id);
   
   const { data: hosteldata, error: hostelerror } = await supabase
     .from("hostels")

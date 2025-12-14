@@ -26,9 +26,11 @@
                 <td><a target="_blank" href="<%= floordata.link %>">VIEW</a></td>
 
           <% } %>
-      <td><form method="POST" action="/modify-floor-plan">
-        <div class="mb-3"><input class="form-control" name="new_image" type="file"></div>
-         <input class="btn btn-outline-danger" type="submit" value="SUBMIT">
+      <td><form method="POST" action="/modify-floor-plan" enctype="multipart/form-data">
+        <input type="hidden" name="floor_id" value="<%=floordata.id %>">
+        <input type="hidden" name="hostel_id" value="<%=hosteldata.hostel_id %>">
+        <div class="mb-3"><input class="form-control" name="image" type="file"></div>
+         <input class="btn btn-primary" type="submit" value="SUBMIT">
       </form></td>
     </tr>
   </tbody>
