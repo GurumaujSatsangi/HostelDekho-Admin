@@ -6,11 +6,24 @@ import { fileURLToPath } from "url";
 import path from "path";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-
+import multer from 'multer';
+import cloudinary from 'cloudinary';
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
 dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = multer.diskStorage({});
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -193,6 +206,79 @@ app.get("/admin/delete-floor/:hostelid/:floorid", async (req, res) => {
   return res.redirect(`/admin/manage-hostel/${req.params.hostelid}`);
 });
 
+app.post("/update-room-details/:id",async(req,res)=>{
+
+  const {hostel_id,room_type,price_veg,price_non_veg,price_special,image}=req.body;
+
+    if (req.file) {
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          folder: "room_images",
+          resource_type: "image",
+        });
+        image = uploadResult.secure_url;
+      }
+
+  const {data:roomdetailsdata,error:roomdetailserror}=await supabase.from("room_details").update({
+
+price_veg,
+price_non_veg,
+price_special,
+image,
+
+  }).eq("room_detail_id",req.params.id);
+      return res.redirect(`/admin/manage-hostel/${hostel_id}`);
+
+})
+
+
+app.post(
+  "/publish-room-details",
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      const {
+        hostel_id,
+        room_type,
+        price_veg,
+        price_non_veg,
+        price_special,
+      } = req.body;
+
+      let imageUrl = null; // ✅ declare first
+
+      // upload image if provided
+      if (req.file) {
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          folder: "room_images",
+          resource_type: "image",
+        });
+        imageUrl = uploadResult.secure_url;
+      }
+
+      // insert into database
+      const { error } = await supabase
+        .from("room_details")
+        .insert({
+          hostel_id,
+          room_type,
+          price_veg,
+          price_non_veg,
+          price_special,
+          image: imageUrl,
+        });
+
+      if (error) throw error;
+
+      return res.redirect(`/admin/manage-hostel/${hostel_id}`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error.message);
+    }
+  }
+);
+
+
+
 app.post("/add-new-floor", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
@@ -246,6 +332,7 @@ app.get("/admin/manage-hostel/:id", async (req, res) => {
     return res.redirect("/");
   }
 
+  const {data:roomdetailsdata,error:roomdetailserror}=await supabase.from("room_details").select("*").eq("hostel_id",req.params.id).single();
   
   const { data: hosteldata, error: hostelerror } = await supabase
     .from("hostels")
@@ -264,6 +351,7 @@ app.get("/admin/manage-hostel/:id", async (req, res) => {
     hosteldata,
     floordata,
     roomdata,
+    roomdetailsdata,
   });
 });
 

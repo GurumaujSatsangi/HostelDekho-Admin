@@ -73,38 +73,108 @@
       <% }) %>
       <% } %>
     </tbody>
-  </table>
-  <h4>ROOM DETAILS</h4>
-  <hr>
-  <table class="table">
-    <tr>
-      <td rowspan="2">
-        <b>ROOM TYPE</b>
-      </td>
-      <td colspan="3">
-        <b>PRICE</b>
-      </td>
-      <td rowspan="2">
-        <b>IMAGE</b>
-      </td>
-      <td rowspan="2"><b>ACTION</b></td>
-    </tr>
-    <tr>
-<td><b>VEG MESS</b></td>
-<td><b>NON VEG MESS</b></td>
-<td><b>SPECIAL MESS</b></td>
-
-    </tr>
-<% hosteldata.bed_availability.forEach(function(bed) { %>
-    <tr><td><%= bed %></td>
-    <form action="/add-room-details" method="POST"><td><input class="form-control" type="text" name="price_veg"></td>
-  <td><input class="form-control" type="text" name="price_non_veg"></td>
-  <td><input class="form-control" type="text" name="price_special"></td>
-  <td><input type="file"></td>
-  <td><input type="submit" value="Publish" class="btn btn-primary"></input></td></form>
+<table class="table">
+  <tr>
+    <td rowspan="2"><b>ROOM TYPE</b></td>
+    <td colspan="3"><b>PRICE</b></td>
+    <td rowspan="2"><b>IMAGE</b></td>
+    <td rowspan="2"><b>ACTION</b></td>
   </tr>
+  <tr>
+    <td><b>VEG MESS</b></td>
+    <td><b>NON VEG MESS</b></td>
+    <td><b>SPECIAL MESS</b></td>
+  </tr>
+
+  <% hosteldata.bed_availability.forEach(function(bed) { %>
+
+  <form action="/publish-room-details" method="POST" enctype="multipart/form-data">
+    <tr>
+      <!-- ROOM TYPE -->
+      <td>
+        <input type="text" class="form-control" value="<%= bed %>" readonly>
+        <input type="hidden" name="room_type" value="<%= bed %>">
+        <input type="hidden" name="hostel_id" value="<%= hosteldata.hostel_id %>">
+      </td>
+          <!-- PRICE VEG -->
+      <td>
+        <% if (roomdetailsdata && roomdetailsdata.room_type === bed && roomdetailsdata.price_veg) { %>
+          <input
+            class="form-control"
+            type="text"
+            name="price_veg"
+            value="<%= roomdetailsdata.price_veg %>"
+            required
+          >
+        <% } else { %>
+          <input class="form-control" type="text" name="price_veg" required>
+        <% } %>
+      </td>
+
+      <!-- PRICE NON VEG -->
+       <td>
+        <% if (roomdetailsdata && roomdetailsdata.room_type === bed && roomdetailsdata.price_non_veg) { %>
+          <input
+            class="form-control"
+            type="text"
+            name="price_non_veg"
+            value="<%= roomdetailsdata.price_non_veg %>"
+            required
+          >
+        <% } else { %>
+          <input class="form-control" type="text" name="price_non_veg" required>
+        <% } %>
+      </td>
+
+      <!-- PRICE SPECIAL -->
+        <td>
+        <% if (roomdetailsdata && roomdetailsdata.room_type === bed && roomdetailsdata.price_special) { %>
+          <input
+            class="form-control"
+            type="text"
+            name="price_special"
+            value="<%= roomdetailsdata.price_special %>"
+            required
+          >
+        <% } else { %>
+          <input class="form-control" type="text" name="price_special" required>
+        <% } %>
+      </td>
+
+      <!-- IMAGE -->
+      <td>
+        <% if (roomdetailsdata && roomdetailsdata.room_type === bed && roomdetailsdata.image ) { %>
+          <input
+            type="file"
+name="image"            
+class="form-control"
+          >
+          <br>
+          <a href="<%=roomdetailsdata.image %>" target="_blank" class="btn btn-outline-primary"><i class="bi bi-eye-fill"></i> View Uploaded Image</a>
+        <% } else { %>
+           <input
+            type="file"
+name="image"            
+class="form-control"
+          >
+        <% } %>
+      </td>
+
+      <!-- ACTION -->
+       <td>
+        <% if (roomdetailsdata && roomdetailsdata.room_type === bed && (roomdetailsdata.price_veg || roomdetailsdata.price_non_veg || roomdetailsdata.price_special) ) { %>
+         <a href="/update-room-details/<%=roomdetailsdata.room_detail_id" class="btn btn-warning">Update </a>
+        <% } else { %>
+          <input class="btn btn-primary" type="submit" value="Publish">
+        <% } %>
+      </td>
+    </tr>
+  </form>
+
   <% }) %>
-  </table>
+</table>
+
+
 <h4>ROOMS</h4>
   <hr>
   <table class="table">
