@@ -206,9 +206,10 @@ app.get("/admin/delete-floor/:hostelid/:floorid", async (req, res) => {
   return res.redirect(`/admin/manage-hostel/${req.params.hostelid}`);
 });
 
-app.post("/update-room-details/:id",async(req,res)=>{
+app.post("/update-room-details/:id", upload.single("image"), async(req,res)=>{
 
-  const {hostel_id,room_type,price_veg,price_non_veg,price_special,image}=req.body;
+  const {hostel_id,room_type,price_veg,price_non_veg,price_special}=req.body;
+  let image = null;
 
     if (req.file) {
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
@@ -216,6 +217,17 @@ app.post("/update-room-details/:id",async(req,res)=>{
           resource_type: "image",
         });
         image = uploadResult.secure_url;
+
+         const {data:roomdetailsdata,error:roomdetailserror}=await supabase.from("room_details").update({
+
+price_veg,
+price_non_veg,
+price_special,
+image,
+
+  }).eq("room_detail_id",req.params.id);
+
+
       }
 
   const {data:roomdetailsdata,error:roomdetailserror}=await supabase.from("room_details").update({
@@ -223,7 +235,7 @@ app.post("/update-room-details/:id",async(req,res)=>{
 price_veg,
 price_non_veg,
 price_special,
-image,
+
 
   }).eq("room_detail_id",req.params.id);
       return res.redirect(`/admin/manage-hostel/${hostel_id}`);
@@ -233,7 +245,7 @@ image,
 
 app.post(
   "/publish-room-details",
-  upload.single("file"),
+  upload.single("image"),
   async (req, res) => {
     try {
       const {

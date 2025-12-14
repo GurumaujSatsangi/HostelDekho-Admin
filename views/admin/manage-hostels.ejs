@@ -88,7 +88,7 @@
 
   <% hosteldata.bed_availability.forEach(function(bed) { %>
 
-  <form action="/publish-room-details" method="POST" enctype="multipart/form-data">
+  <form action="<%= (roomdetailsdata && roomdetailsdata.room_type === bed && (roomdetailsdata.price_veg || roomdetailsdata.price_non_veg || roomdetailsdata.price_special)) ? '/update-room-details/' + roomdetailsdata.room_detail_id : '/publish-room-details' %>" method="POST" enctype="multipart/form-data">
     <tr>
       <!-- ROOM TYPE -->
       <td>
@@ -163,7 +163,7 @@ class="form-control"
       <!-- ACTION -->
        <td>
         <% if (roomdetailsdata && roomdetailsdata.room_type === bed && (roomdetailsdata.price_veg || roomdetailsdata.price_non_veg || roomdetailsdata.price_special) ) { %>
-         <a href="/update-room-details/<%=roomdetailsdata.room_detail_id" class="btn btn-warning">Update </a>
+          <input class="btn btn-warning" type="submit" value="Update">
         <% } else { %>
           <input class="btn btn-primary" type="submit" value="Publish">
         <% } %>
