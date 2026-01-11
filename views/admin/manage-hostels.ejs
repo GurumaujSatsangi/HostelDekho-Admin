@@ -76,12 +76,17 @@
 <table class="table">
   <tr>
     <td rowspan="2"><b>ROOM TYPE</b></td>
-    <td colspan="3"><b>PRICE</b></td>
+    <td colspan="3"><b>PRICE (INDIAN)</b></td>
+    <td colspan="3"><b>PRICE (NRI)</b></td>
+
     <td rowspan="2"><b>IMAGE</b></td>
     <td rowspan="2"><b>ACTION</b></td>
   </tr>
   <tr>
     <td><b>VEG MESS</b></td>
+    <td><b>NON VEG MESS</b></td>
+    <td><b>SPECIAL MESS</b></td>
+      <td><b>VEG MESS</b></td>
     <td><b>NON VEG MESS</b></td>
     <td><b>SPECIAL MESS</b></td>
   </tr>
@@ -141,6 +146,50 @@
           <input class="form-control" type="text" name="price_special" required>
         <% } %>
       </td>
+
+        <td>
+        <% if (currentRoomDetails && currentRoomDetails.price_veg_nri) { %>
+          <input
+            class="form-control"
+            type="text"
+            name="price_veg_nri"
+            value="<%= currentRoomDetails.price_veg_nri %>"
+            required
+          >
+        <% } else { %>
+          <input class="form-control" type="text" name="price_veg_nri" required>
+        <% } %>
+      </td>
+
+        <td>
+        <% if (currentRoomDetails && currentRoomDetails.price_non_veg_nri) { %>
+          <input
+            class="form-control"
+            type="text"
+            name="price_non_veg_nri"
+            value="<%= currentRoomDetails.price_non_veg_nri %>"
+            required
+          >
+        <% } else { %>
+          <input class="form-control" type="text" name="price_non_veg_nri" required>
+        <% } %>
+      </td>
+
+        <td>
+        <% if (currentRoomDetails && currentRoomDetails.price_special_nri) { %>
+          <input
+            class="form-control"
+            type="text"
+            name="price_special_nri"
+            value="<%= currentRoomDetails.price_special_nri %>"
+            required
+          >
+        <% } else { %>
+          <input class="form-control" type="text" name="price_special_nri" required>
+        <% } %>
+      </td>
+
+
 
       <!-- IMAGE -->
       <td>

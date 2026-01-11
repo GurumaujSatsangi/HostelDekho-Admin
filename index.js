@@ -208,7 +208,7 @@ app.get("/admin/delete-floor/:hostelid/:floorid", async (req, res) => {
 
 app.post("/update-room-details/:id", upload.single("image"), async(req,res)=>{
 
-  const {hostel_id,room_type,price_veg,price_non_veg,price_special}=req.body;
+  const {hostel_id,room_type,price_veg,price_non_veg,price_special,price_veg_nri,price_non_veg_nri,price_special_nri}=req.body;
   let image = null;
 
     if (req.file) {
@@ -223,6 +223,9 @@ app.post("/update-room-details/:id", upload.single("image"), async(req,res)=>{
 price_veg,
 price_non_veg,
 price_special,
+price_veg_nri,
+price_non_veg_nri,
+price_special_nri,
 image,
 
   }).eq("room_detail_id",req.params.id);
@@ -235,6 +238,9 @@ image,
 price_veg,
 price_non_veg,
 price_special,
+price_veg_nri,
+price_non_veg_nri,
+price_special_nri,
 
 
   }).eq("room_detail_id",req.params.id);
@@ -254,6 +260,9 @@ app.post(
         price_veg,
         price_non_veg,
         price_special,
+        price_veg_nri,
+        price_non_veg_nri,
+        price_special_nri,
       } = req.body;
 
       let imageUrl = null; // ✅ declare first
@@ -276,6 +285,9 @@ app.post(
           price_veg,
           price_non_veg,
           price_special,
+          price_veg_nri,
+          price_non_veg_nri,
+          price_special_nri,
           image: imageUrl,
         });
 
@@ -288,8 +300,6 @@ app.post(
     }
   }
 );
-
-
 
 app.post("/add-new-floor", async (req, res) => {
   if (!req.isAuthenticated()) {
