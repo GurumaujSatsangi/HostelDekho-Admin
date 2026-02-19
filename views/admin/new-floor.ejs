@@ -9,19 +9,86 @@
 <div class="container">
    <h4>ADD NEW FLOOR FOR <%= hosteldata.hostel_name %></h4>
   <hr>
- <form action="/add-new-floor" method="POST">
+ <form action="/add-new-floor" method="POST" enctype="multipart/form-data">
   <div class="mb-3">
-    <label  class="form-label">FLOOR</label>
+    <label class="form-label">NUMBER OF FLOORS</label>
     <input type="hidden" class="form-control" name="hostelid" value="<%= hosteldata.hostel_id%>" aria-describedby="emailHelp">
-
-    <input type="text" class="form-control" name="floor" aria-describedby="emailHelp">
+    <input type="number" class="form-control" name="floor_count" id="floorCount" min="1" aria-describedby="emailHelp">
   </div>
 
   <div class="mb-3">
-    <input type="submit" class="btn btn-success" value="ADD">
+    <label class="form-label">FLOOR PLANS (OPTIONAL)</label>
+    <div id="floorPlanInputs"></div>
+    <small class="form-text text-muted">Select a file for each floor (Ground, First, Second, Third, etc.).</small>
   </div>
-   
+
+  <div class="mb-3">
+    <input type="submit" class="btn btn-success" value="ADD FLOORS">
+  </div>
  </form>
+
+  <script>
+    (function () {
+      const floorCountInput = document.getElementById("floorCount");
+      const floorPlanInputs = document.getElementById("floorPlanInputs");
+
+      const ordinal = [
+        "Ground",
+        "First",
+        "Second",
+        "Third",
+        "Fourth",
+        "Fifth",
+        "Sixth",
+        "Seventh",
+        "Eighth",
+        "Ninth",
+        "Tenth",
+        "Eleventh",
+        "Twelfth",
+        "Thirteenth",
+        "Fourteenth",
+        "Fifteenth",
+        "Sixteenth",
+        "Seventeenth",
+        "Eighteenth",
+        "Nineteenth",
+        "Twentieth",
+      ];
+
+      const getFloorName = (index) => {
+        if (index < ordinal.length) return `${ordinal[index]} Floor`;
+        return `${index + 1}th Floor`;
+      };
+
+      const renderInputs = () => {
+        const count = Number.parseInt(floorCountInput.value, 10);
+        floorPlanInputs.innerHTML = "";
+
+        if (!count || count < 1) return;
+
+        for (let i = 0; i < count; i += 1) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "mb-2";
+
+          const label = document.createElement("label");
+          label.className = "form-label";
+          label.textContent = getFloorName(i);
+
+          const input = document.createElement("input");
+          input.type = "file";
+          input.name = "floor_images";
+          input.className = "form-control";
+
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          floorPlanInputs.appendChild(wrapper);
+        }
+      };
+
+      floorCountInput.addEventListener("input", renderInputs);
+    })();
+  </script>
   
 </div>
 <%- include('../partials/footer') %>

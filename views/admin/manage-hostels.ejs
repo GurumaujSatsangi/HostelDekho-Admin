@@ -73,6 +73,7 @@
       <% }) %>
       <% } %>
     </tbody>
+<form action="/save-room-details" method="POST" enctype="multipart/form-data">
 <table class="table">
   <tr>
     <td rowspan="2"><b>ROOM TYPE</b></td>
@@ -93,13 +94,13 @@
 
   <% hosteldata.bed_availability.forEach(function(bed) { %>
   <% const currentRoomDetails = roomdetailsdata ? roomdetailsdata.find(rd => rd.room_type === bed) : null; %>
-
-  <form action="<%= (currentRoomDetails && (currentRoomDetails.price_veg || currentRoomDetails.price_non_veg || currentRoomDetails.price_special)) ? '/update-room-details/' + currentRoomDetails.room_detail_id : '/publish-room-details' %>" method="POST" enctype="multipart/form-data">
     <tr>
       <!-- ROOM TYPE -->
       <td>
         <input type="text" class="form-control" value="<%= bed %>" readonly>
-        <input type="hidden" name="room_type" value="<%= bed %>">
+        <input type="hidden" name="room_type[]" value="<%= bed %>">
+        <input type="hidden" name="room_detail_id[]" value="<%= currentRoomDetails ? currentRoomDetails.room_detail_id : '' %>">
+        <input type="hidden" name="current_image[]" value="<%= currentRoomDetails && currentRoomDetails.image ? currentRoomDetails.image : '' %>">
         <input type="hidden" name="hostel_id" value="<%= hosteldata.hostel_id %>">
       </td>
           <!-- PRICE VEG -->
@@ -108,12 +109,12 @@
           <input
             class="form-control"
             type="text"
-            name="price_veg"
+            name="price_veg[]"
             value="<%= currentRoomDetails.price_veg %>"
             required
           >
         <% } else { %>
-          <input class="form-control" type="text" name="price_veg" required>
+          <input class="form-control" type="text" name="price_veg[]" required>
         <% } %>
       </td>
 
@@ -123,12 +124,12 @@
           <input
             class="form-control"
             type="text"
-            name="price_non_veg"
+              name="price_non_veg[]"
             value="<%= currentRoomDetails.price_non_veg %>"
             required
           >
         <% } else { %>
-          <input class="form-control" type="text" name="price_non_veg" required>
+            <input class="form-control" type="text" name="price_non_veg[]" required>
         <% } %>
       </td>
 
@@ -138,12 +139,12 @@
           <input
             class="form-control"
             type="text"
-            name="price_special"
+            name="price_special[]"
             value="<%= currentRoomDetails.price_special %>"
             required
           >
         <% } else { %>
-          <input class="form-control" type="text" name="price_special" required>
+          <input class="form-control" type="text" name="price_special[]" required>
         <% } %>
       </td>
 
@@ -152,12 +153,12 @@
           <input
             class="form-control"
             type="text"
-            name="price_veg_nri"
+            name="price_veg_nri[]"
             value="<%= currentRoomDetails.price_veg_nri %>"
             required
           >
         <% } else { %>
-          <input class="form-control" type="text" name="price_veg_nri" required>
+          <input class="form-control" type="text" name="price_veg_nri[]" required>
         <% } %>
       </td>
 
@@ -166,12 +167,12 @@
           <input
             class="form-control"
             type="text"
-            name="price_non_veg_nri"
+            name="price_non_veg_nri[]"
             value="<%= currentRoomDetails.price_non_veg_nri %>"
             required
           >
         <% } else { %>
-          <input class="form-control" type="text" name="price_non_veg_nri" required>
+          <input class="form-control" type="text" name="price_non_veg_nri[]" required>
         <% } %>
       </td>
 
@@ -180,12 +181,12 @@
           <input
             class="form-control"
             type="text"
-            name="price_special_nri"
+            name="price_special_nri[]"
             value="<%= currentRoomDetails.price_special_nri %>"
             required
           >
         <% } else { %>
-          <input class="form-control" type="text" name="price_special_nri" required>
+          <input class="form-control" type="text" name="price_special_nri[]" required>
         <% } %>
       </td>
 
@@ -196,7 +197,7 @@
         <% if (currentRoomDetails && currentRoomDetails.image ) { %>
           <input
             type="file"
-name="image"            
+name="images"            
 class="form-control"
           >
           <br>
@@ -204,25 +205,18 @@ class="form-control"
         <% } else { %>
            <input
             type="file"
-name="image"            
+name="images"            
 class="form-control"
           >
         <% } %>
       </td>
-
-      <!-- ACTION -->
-       <td>
-        <% if (currentRoomDetails && (currentRoomDetails.price_veg || currentRoomDetails.price_non_veg || currentRoomDetails.price_special) ) { %>
-          <input class="btn btn-warning" type="submit" value="Update">
-        <% } else { %>
-          <input class="btn btn-primary" type="submit" value="Publish">
-        <% } %>
-      </td>
     </tr>
-  </form>
-
   <% }) %>
 </table>
+<div class="mb-3">
+  <input class="btn btn-primary" type="submit" value="Save All">
+</div>
+</form>
 
 
 <h4>ROOMS</h4>

@@ -301,26 +301,175 @@ app.post(
   }
 );
 
-app.post("/add-new-floor", async (req, res) => {
+app.post(
+  "/save-room-details",
+  upload.array("images"),
+  async (req, res) => {
+    try {
+      const {
+        hostel_id,
+        room_detail_id,
+        room_type,
+        price_veg,
+        price_non_veg,
+        price_special,
+        price_veg_nri,
+        price_non_veg_nri,
+        price_special_nri,
+        current_image,
+      } = req.body;
+
+      const toArray = (value) => {
+        if (Array.isArray(value)) return value;
+        if (typeof value === "undefined") return [];
+        return [value];
+      };
+
+      const roomDetailIds = toArray(room_detail_id);
+      const roomTypes = toArray(room_type);
+      const priceVeg = toArray(price_veg);
+      const priceNonVeg = toArray(price_non_veg);
+      const priceSpecial = toArray(price_special);
+      const priceVegNri = toArray(price_veg_nri);
+      const priceNonVegNri = toArray(price_non_veg_nri);
+      const priceSpecialNri = toArray(price_special_nri);
+      const currentImages = toArray(current_image);
+      const files = req.files || [];
+
+      for (let i = 0; i < roomTypes.length; i += 1) {
+        let imageUrl = null;
+
+        if (files[i]) {
+          const uploadResult = await cloudinary.uploader.upload(files[i].path, {
+            folder: "room_images",
+            resource_type: "image",
+          });
+          imageUrl = uploadResult.secure_url;
+        }
+
+        if (roomDetailIds[i]) {
+          const updateData = {
+            price_veg: priceVeg[i],
+            price_non_veg: priceNonVeg[i],
+            price_special: priceSpecial[i],
+            price_veg_nri: priceVegNri[i],
+            price_non_veg_nri: priceNonVegNri[i],
+            price_special_nri: priceSpecialNri[i],
+          };
+
+          if (imageUrl) {
+            updateData.image = imageUrl;
+          }
+
+          const { error } = await supabase
+            .from("room_details")
+            .update(updateData)
+            .eq("room_detail_id", roomDetailIds[i]);
+
+          if (error) throw error;
+        } else {
+          const { error } = await supabase
+            .from("room_details")
+            .insert({
+              hostel_id,
+              room_type: roomTypes[i],
+              price_veg: priceVeg[i],
+              price_non_veg: priceNonVeg[i],
+              price_special: priceSpecial[i],
+              price_veg_nri: priceVegNri[i],
+              price_non_veg_nri: priceNonVegNri[i],
+              price_special_nri: priceSpecialNri[i],
+              image: imageUrl || currentImages[i] || null,
+            });
+
+          if (error) throw error;
+        }
+      }
+
+      return res.redirect(`/admin/manage-hostel/${hostel_id}`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(error.message);
+    }
+  }
+);
+
+app.post("/add-new-floor", upload.array("floor_images"), async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect("/");
   }
 
   const hostelid = req.body.hostelid;
-  const floor = req.body.floor;
+  const floorCount = Number.parseInt(req.body.floor_count, 10);
+  const files = req.files || [];
 
-  const { data, error } = await supabase.from("floor_plans").insert({
-    hostel_id: hostelid,
-    floor: floor,
-  });
-  res.redirect(`/admin/manage-hostel/${hostelid}`);
+  if (!floorCount || floorCount < 1) {
+    return res.redirect(`/admin/${hostelid}/new-floor`);
+  }
+
+  const ordinal = [
+    "Ground",
+    "First",
+    "Second",
+    "Third",
+    "Fourth",
+    "Fifth",
+    "Sixth",
+    "Seventh",
+    "Eighth",
+    "Ninth",
+    "Tenth",
+    "Eleventh",
+    "Twelfth",
+    "Thirteenth",
+    "Fourteenth",
+    "Fifteenth",
+    "Sixteenth",
+    "Seventeenth",
+    "Eighteenth",
+    "Nineteenth",
+    "Twentieth",
+  ];
+
+  const getFloorName = (index) => {
+    if (index < ordinal.length) return `${ordinal[index]} Floor`;
+    return `${index + 1}th Floor`;
+  };
+
+  try {
+    for (let i = 0; i < floorCount; i += 1) {
+      let imageUrl = null;
+
+      if (files[i]) {
+        const uploadResult = await cloudinary.uploader.upload(files[i].path, {
+          folder: "floor_plans",
+          resource_type: "image",
+        });
+        imageUrl = uploadResult.secure_url;
+      }
+
+      const { error } = await supabase.from("floor_plans").insert({
+        hostel_id: hostelid,
+        floor: getFloorName(i),
+        link: imageUrl,
+      });
+
+      if (error) throw error;
+    }
+
+    return res.redirect(`/admin/manage-hostel/${hostelid}`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error.message);
+  }
 });
 
 app.post("/add-new-block", async (req, res) => {
-  const { block, type, beds, btype, mess_caterer,veg_mess_floor,non_veg_mess_floor,special_mess_floor,badminton_court,chota_dhobi } = req.body;
+  const { block, gender, type, beds, btype, mess_caterer,veg_mess_floor,non_veg_mess_floor,special_mess_floor,badminton_court,chota_dhobi } = req.body;
   const { data, error } = await supabase.from("hostels").insert({
     hostel_name: block,
-    hostel_type: type,
+    gender: gender,
+    hostel_type:type,
     bed_availability: beds,
     bed_type: btype,
     mess_caterer:mess_caterer,
